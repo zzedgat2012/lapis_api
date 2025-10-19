@@ -1,0 +1,132 @@
+# Lapis API Template
+
+Template repository for building REST APIs with [Lapis](https://leafo.net/lapis/) framework running on OpenResty in Docker.
+
+## 🚀 Quick Start
+
+```bash
+# Clone and start
+git clone <your-repo-url>
+cd legal_api
+docker compose up
+```
+
+Access: <http://localhost:8080>
+
+## 📋 What's Included
+
+- ✅ Lapis framework on OpenResty (Alpine)
+- ✅ Docker Compose setup for development
+- ✅ SQLite for development (PostgreSQL recommended for production)
+- ✅ Hot-reload enabled (`lua_code_cache off`)
+- ✅ Example CRUD API for users
+- ✅ Busted test framework
+- ✅ Organized project structure
+
+## 📁 Project Structure
+
+```
+legal_api/
+├── app.lua              # Main application and routes
+├── config.lua           # Environment configurations
+├── models.lua           # Model loader
+├── nginx.conf           # OpenResty configuration
+├── Dockerfile           # Container build definition
+├── docker-compose.yml   # Docker orchestration
+├── project-requirements.md  # User stories and requirements
+├── docs/                # Technical documentation
+│   ├── 1. Development.md   # Development guide
+│   ├── 2. Api.md           # API documentation
+│   ├── 3. Database.md      # Database configuration
+│   └── 4. Testing.md       # Testing guide
+├── tests/               # Busted test specs
+│   └── user_spec.lua
+├── models/              # Database models (create as needed)
+└── .vscode/             # VSCode/Copilot settings
+    └── copilot-instructions.md
+```
+
+## 🔧 Development
+
+### Make changes to code
+
+1. Edit `.lua` files
+2. Changes apply automatically (hot-reload enabled)
+3. Test: `curl http://localhost:8080/users`
+
+**Note**: Hot-reload works because `lua_code_cache off` is enabled in development. Data persists in SQLite database.
+
+### Run tests
+
+```bash
+docker compose exec web busted
+```
+
+### View logs
+
+```bash
+docker compose logs -f
+```
+
+## 💾 Database
+
+**Development**: SQLite (file-based, persists data)  
+**Production**: PostgreSQL recommended
+
+Configuration in `config.lua` supports:
+
+- SQLite (default, zero-config)
+- PostgreSQL (recommended for production)
+- MySQL (alternative)
+- Redis (for caching/sessions)
+
+See `docs/3. Database.md` for configuration and switching databases.
+
+## 📚 Documentation
+
+1. [Development Guide](docs/1.%20Development.md) - Setup, workflow, best practices
+2. [API Reference](docs/2.%20Api.md) - Endpoint documentation
+3. [Database Guide](docs/3.%20Database.md) - SQLite, PostgreSQL, MySQL, Redis setup
+4. [Testing Guide](docs/4.%20Testing.md) - How to write and run tests
+5. [Project Requirements](project-requirements.md) - User stories and features
+
+## 🎯 Example API
+
+```bash
+# List users
+curl http://localhost:8080/users
+
+# Create user
+curl -X POST http://localhost:8080/users \
+  -d "name=John&email=john@example.com"
+
+# Get user
+curl http://localhost:8080/users/1
+
+# Update user
+curl -X PUT http://localhost:8080/users/1 \
+  -d "name=John Updated"
+
+# Delete user
+curl -X DELETE http://localhost:8080/users/1
+```
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Lapis](https://leafo.net/lapis/)
+- **Web Server**: [OpenResty](https://openresty.org/)
+- **Language**: Lua 5.1 / LuaJIT
+- **Container**: Docker + Docker Compose
+- **Testing**: [Busted](https://olivinelabs.com/busted/)
+- **Database (dev)**: SQLite
+- **Database (prod)**: PostgreSQL
+
+## 📖 Resources
+
+- [Lapis Documentation](https://leafo.net/lapis/reference.html)
+- [OpenResty Documentation](https://openresty-reference.readthedocs.io/)
+- [Lua 5.1 Reference](https://www.lua.org/manual/5.1/)
+
+## 📝 License
+
+MIT

@@ -1,0 +1,8 @@
+# Docker temporary files and logs
+.dockerjunk/
+
+# Ignore generated migration files but keep loader
+migrations/*.lua
+!migrations/init.lua
+!migrations/migrations.20251019_000001_create_users.lua
+!migrations/migrations.20251019_000002_seed_admin_user.lua
