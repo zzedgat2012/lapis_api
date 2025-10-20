@@ -21,6 +21,7 @@ REST API for managing legal entities using Lapis framework on OpenResty.
 | ID | Title | As a | I want to | So that | Acceptance Criteria |
 | --- | --- | --- | --- | --- | --- |
 | US-006 | Expose OpenAPI Specification | Frontend or integration developer | Access an OpenAPI description of the API | I can integrate the backend with any client or tooling agnostically | OpenAPI 3.x JSON document available at `GET /openapi.json`; Specification covers all user endpoints, parameters, request bodies, and responses; Endpoint responds with `200 OK` and `application/json` content type; Specification version increases when routes or schemas change; Documentation includes instructions to regenerate or update the OpenAPI file |
+| US-007 | Provide Swagger UI | Developer or tester | Explore and try API endpoints interactively via the browser | I can prototype and validate integrations quickly without custom tooling | Swagger UI available at `/docs` (or configured path); UI loads the published OpenAPI spec automatically; Supports making authenticated/unauthenticated requests that mirror API behavior; Deployment instructions documented for local and production environments |
 
 ## Technical Requirements
 
