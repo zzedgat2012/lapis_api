@@ -35,8 +35,8 @@ app:get("/openapi.json", function()
   return OpenapiPresenter.show()
 end)
 
-app:get("/docs", function()
-  return SwaggerPresenter.show()
+app:get("/docs", function(self)
+  return SwaggerPresenter.show(self)
 end)
 
 return app
