@@ -2,6 +2,7 @@ local lapis = require("lapis")
 local app = lapis.Application()
 local UserPresenter = require("presenters.user_presenter")
 local OpenapiPresenter = require("presenters.openapi_presenter")
+local SwaggerPresenter = require("presenters.swagger_presenter")
 
 -- Home route
 app:get("/", function()
@@ -32,6 +33,10 @@ end)
 -- OpenAPI specification
 app:get("/openapi.json", function()
   return OpenapiPresenter.show()
+end)
+
+app:get("/docs", function(self)
+  return SwaggerPresenter.show(self)
 end)
 
 return app
