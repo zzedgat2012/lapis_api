@@ -1,6 +1,7 @@
 local lapis = require("lapis")
 local app = lapis.Application()
 local UserPresenter = require("presenters.user_presenter")
+local OpenapiPresenter = require("presenters.openapi_presenter")
 
 -- Home route
 app:get("/", function()
@@ -26,6 +27,11 @@ end)
 
 app:delete("/users/:id", function(self)
   return UserPresenter.destroy(self.params.id)
+end)
+
+-- OpenAPI specification
+app:get("/openapi.json", function()
+  return OpenapiPresenter.show()
 end)
 
 return app
