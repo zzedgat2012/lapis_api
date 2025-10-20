@@ -23,6 +23,12 @@ REST API for managing legal entities using Lapis framework on OpenResty.
 | US-006 | Expose OpenAPI Specification | Frontend or integration developer | Access an OpenAPI description of the API | I can integrate the backend with any client or tooling agnostically | OpenAPI 3.x JSON document available at `GET /openapi.json`; Specification covers all user endpoints, parameters, request bodies, and responses; Endpoint responds with `200 OK` and `application/json` content type; Specification version increases when routes or schemas change; Documentation includes instructions to regenerate or update the OpenAPI file |
 | US-007 | Provide Swagger UI | Developer or tester | Explore and try API endpoints interactively via the browser | I can prototype and validate integrations quickly without custom tooling | Swagger UI available at `/docs` (or configured path); UI loads the published OpenAPI spec automatically; Supports making authenticated/unauthenticated requests that mirror API behavior; Deployment instructions documented for local and production environments |
 
+### Epic: Developer Tooling Automation
+
+| ID | Title | As a | I want to | So that | Acceptance Criteria |
+| --- | --- | --- | --- | --- | --- |
+| US-008 | Generate Models via Make | Backend developer | Scaffold domain artifacts with a single Make command | I can work faster with consistent boilerplate similar to Laravel/Rails generators | Running `make model -n <Name>` creates `models/<name>.lua` with a stub module and a timestamped migration file seeded with the model name; Generator aborts with a helpful error when the name is missing or already present; Running `make model -s crud -n <Name>` additionally creates presenter, view, and test skeletons aligned with CRUD routes plus the same migration; CLI help (`make help` or README) documents both usage patterns and flags |
+
 ## Technical Requirements
 
 ### Database
