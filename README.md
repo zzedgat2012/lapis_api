@@ -76,11 +76,17 @@ make start    # start containers in background
 make stop     # stop containers
 make restart  # restart containers
 make migrate  # apply database migrations (Lapis)
+make rollback # rollback the most recent migrations (scaffold-generated)
 make test     # run busted test suite
 make logs     # tail application logs
 make shell    # open shell inside the web container
 make clean    # stop and remove containers + volumes
+make model NAME=Invoice           # generate model + migration
+make model NAME=Invoice SCAFFOLD=crud  # generate CRUD presenter/view/test stubs + routes + OpenAPI docs
 ```
+
+> **Tip:** `make model` also accepts `ARGS="--name Invoice --scaffold crud"` if you prefer
+passing raw flags directly to the generator script.
 
 ## 💾 Database
 
