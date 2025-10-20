@@ -8,7 +8,8 @@ Template repository for building REST APIs with [Lapis](https://leafo.net/lapis/
 # Clone and start
 git clone <your-repo-url>
 cd legal_api
-docker compose up
+make start    # docker compose up -d
+make migrate  # lapis migrate inside the container
 ```
 
 Access: <http://localhost:8080>
@@ -59,13 +60,26 @@ legal_api/
 ### Run tests
 
 ```bash
-docker compose exec web busted
+make test
 ```
 
 ### View logs
 
 ```bash
-docker compose logs -f
+make logs
+```
+
+### Handy Make targets
+
+```bash
+make start    # start containers in background
+make stop     # stop containers
+make restart  # restart containers
+make migrate  # apply database migrations (Lapis)
+make test     # run busted test suite
+make logs     # tail application logs
+make shell    # open shell inside the web container
+make clean    # stop and remove containers + volumes
 ```
 
 ## 💾 Database
@@ -109,6 +123,9 @@ curl -X PUT http://localhost:8080/users/1 \
 
 # Delete user
 curl -X DELETE http://localhost:8080/users/1
+
+# Fetch OpenAPI spec
+curl http://localhost:8080/openapi.json
 ```
 
 ## 🛠️ Tech Stack
