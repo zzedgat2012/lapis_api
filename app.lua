@@ -3,10 +3,15 @@ local app = lapis.Application()
 local UserPresenter = require("presenters.user_presenter")
 local OpenapiPresenter = require("presenters.openapi_presenter")
 local SwaggerPresenter = require("presenters.swagger_presenter")
+local JsonView = require("views.json_view")
 
 -- Home route
 app:get("/", function()
   return "Welcome to Lapis " .. require("lapis.version")
+end)
+
+app:get("/health", function()
+  return JsonView.success({ status = "ok" })
 end)
 
 -- User routes

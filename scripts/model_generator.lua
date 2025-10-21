@@ -558,13 +558,27 @@ local types = schema.types
 
 local migration = {}
 
+local function schema_type(name)
+  return rawget(schema.types, name)
+end
+
+local id_type = schema_type("serial") or schema_type("id") or schema_type("integer")
+local timestamp_type = schema_type("timestamp") or schema_type("time") or schema_type("datetime")
+
+local function timestamp_column()
+  if timestamp_type then
+    return timestamp_type({ default = db.raw("CURRENT_TIMESTAMP") })
+  end
+  return "timestamp DEFAULT CURRENT_TIMESTAMP"
+end
+
 function migration.up()
   -- TODO: adjust columns and indexes for %s
   local ok, err = pcall(schema.create_table, "%s", {
-    { "id", types.id },
+    { "id", id_type },
     { "name", types.varchar({ length = 255 }) },
-    { "created_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) },
-    { "updated_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) }
+    { "created_at", timestamp_column() },
+    { "updated_at", timestamp_column() }
   }, {
     if_not_exists = true
   })

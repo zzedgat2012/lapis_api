@@ -43,7 +43,7 @@ end
 
 -- Development environment
 config("development", database_block({
-  default_connection = "mysql",
+  default_connection = "postgres", -- use postgres, mysql or sqlite
   code_cache = "off",
   num_workers = "1",
   sqlite_db = "/app/.dockerjunk/development.db"
