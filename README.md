@@ -90,17 +90,37 @@ passing raw flags directly to the generator script.
 
 ## 💾 Database
 
-**Development**: SQLite (file-based, persists data)  
-**Production**: PostgreSQL recommended
+**Development**: MySQL by default (managed by Docker Compose)  
+**Production**: PostgreSQL recommended (MySQL optional)
 
-Configuration in `config.lua` supports:
+Configuration is driven by the `DB_CONNECTION` environment variable (`mysql`, `postgres`, or `sqlite`). Example:
 
-- SQLite (default, zero-config)
-- PostgreSQL (recommended for production)
-- MySQL (alternative)
-- Redis (for caching/sessions)
+```bash
+# Default MySQL workflow
+export DB_CONNECTION=mysql
+docker compose up -d
+make migrate
 
-See `docs/3. Database.md` for configuration and switching databases.
+# Switch to PostgreSQL (enables the postgres profile and service)
+export DB_CONNECTION=postgres
+export PGHOST=postgres
+export PGUSER=postgres
+export PGPASSWORD=postgres
+export PGDATABASE=legal_api
+docker compose --profile postgres up -d web postgres
+docker compose --profile postgres exec web lapis migrate
+
+# Back to SQLite only
+unset DB_CONNECTION PGHOST PGUSER PGPASSWORD PGDATABASE
+docker compose stop mysql
+docker compose up -d web
+
+# Restore MySQL defaults later
+export DB_CONNECTION=mysql
+docker compose up -d mysql web
+```
+
+The `docker-compose.yml` file runs MySQL by default and ships an optional `postgres` profile for production parity. See `docs/3. Database.md` for deep-dive configuration, migrations, and troubleshooting tips.
 
 ## 📚 Documentation
 
@@ -141,8 +161,8 @@ curl http://localhost:8080/openapi.json
 - **Language**: Lua 5.1 / LuaJIT
 - **Container**: Docker + Docker Compose
 - **Testing**: [Busted](https://olivinelabs.com/busted/)
-- **Database (dev)**: SQLite
-- **Database (prod)**: PostgreSQL
+- **Database (dev)**: MySQL by default, switchable to PostgreSQL/SQLite via `DB_CONNECTION`
+- **Database (prod)**: PostgreSQL (recommended) or MySQL when required
 
 ## 📖 Resources
 

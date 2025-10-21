@@ -10,7 +10,66 @@ services:
       # Mount application files for hot-reload during development
       - ./:/app:cached
     environment:
-      - LAPIS_ENV=development
+      - LAPIS_ENV=${LAPIS_ENV:-development}
+      - DB_CONNECTION=${DB_CONNECTION:-postgres}
+      - PGHOST=${PGHOST:-postgres}
+      - PGUSER=${PGUSER:-postgres}
+      - PGPASSWORD=${PGPASSWORD:-postgres}
+      - PGDATABASE=${PGDATABASE:-legal_api}
+      - MYSQL_HOST=${MYSQL_HOST:-mysql}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+      - MYSQL_USER=${MYSQL_USER:-lapis}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-lapis}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-legal_api}
     working_dir: /app
     # Create .dockerjunk directory before starting nginx
     command: sh -c "mkdir -p /app/.dockerjunk/logs /app/.dockerjunk/client_body_temp /app/.dockerjunk/proxy_temp /app/.dockerjunk/fastcgi_temp /app/.dockerjunk/uwsgi_temp /app/.dockerjunk/scgi_temp && openresty -p /app/ -c nginx.conf"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      - ${DB_SERVICE:-postgres}
+
+  postgres:
+    profiles: ["postgres"]
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${PGDATABASE:-legal_api}
+      - POSTGRES_USER=${PGUSER:-postgres}
+      - POSTGRES_PASSWORD=${PGPASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mysql:
+    profiles: ["mysql"]
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-legal_api}
+      - MYSQL_USER=${MYSQL_USER:-lapis}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-lapis}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  mysql_data:
