@@ -29,7 +29,15 @@ end
 -- 'data' é uma tabela com os novos valores (ex: { name = "Novo Nome" })
 -- 'where' é a condição (ex: { id = 1 })
 function Database.update(table_name, data, where)
-  return db.update(table_name, data, where)
+  local payload = {}
+
+  for key, value in pairs(data or {}) do
+    payload[key] = value
+  end
+
+  payload.updated_at = db.raw("CURRENT_TIMESTAMP")
+
+  return db.update(table_name, payload, where)
 end
 
 -- Função para deletar registros.

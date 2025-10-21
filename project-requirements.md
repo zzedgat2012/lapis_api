@@ -29,14 +29,21 @@ REST API for managing legal entities using Lapis framework on OpenResty.
 | --- | --- | --- | --- | --- | --- |
 | US-008 | Generate Models via Make | Backend developer | Scaffold domain artifacts with a single Make command | I can work faster with consistent boilerplate similar to Laravel/Rails generators | Running `make model -n <Name>` creates `models/<name>.lua` with a stub module and a timestamped migration file seeded with the model name; Generator aborts with a helpful error when the name is missing or already present; Running `make model -s crud -n <Name>` additionally creates presenter, view, and test skeletons aligned with CRUD routes plus the same migration; CLI help (`make help` or README) documents both usage patterns and flags |
 
+### Epic: Database Engine Support
+
+| ID | Title | As a | I want to | So that | Acceptance Criteria |
+| --- | --- | --- | --- | --- | --- |
+| US-009 | Support PostgreSQL | DevOps engineer | Run the API against PostgreSQL with minimal configuration | I can prepare the service for production-ready infrastructure | Docker Compose includes a PostgreSQL service that the Lapis container can depend on; `config.lua` exposes a PostgreSQL block driven by environment variables; Application boots and passes migrations/tests against PostgreSQL; Documentation updated with setup, migration, and troubleshooting steps |
+| US-010 | Support MySQL | DevOps engineer | Run the API against MySQL with minimal configuration | I can integrate with environments where MySQL is the standard | Docker Compose optionally includes a MySQL service wired to the app; `config.lua` exposes a MySQL block driven by environment variables; Application boots and passes migrations/tests against MySQL; Documentation describes driver installation, configuration toggles, and known limitations |
+
 ## Technical Requirements
 
 ### Database
 
 | Environment | Requirements |
 | --- | --- |
-| Development | Use SQLite for quick setup and testing; In-memory storage (data resets on restart); No migrations needed for prototype |
-| Production | Use PostgreSQL for data persistence; Implement proper migrations; Connection pooling recommended |
+| Development | Default to MySQL for day-to-day development without manual setup; Provide documented toggles to switch to SQLite or PostgreSQL when needed; Ensure migrations run against any selected backend |
+| Production | Prefer PostgreSQL with connection pooling; Offer MySQL as an alternative when mandated; Provide guidance on configuring credentials, SSL, and migration execution |
 
 ### Validation Rules
 
@@ -106,8 +113,10 @@ REST API for managing legal entities using Lapis framework on OpenResty.
 | OpenResty (alpine-fat image) | Runtime (Nginx + LuaJIT) |
 | LuaRocks | Package management |
 | Busted | Testing framework |
-| SQLite3 | Development database |
-| PostgreSQL driver | Production database connectivity |
+| SQLite3 | Default development database |
+| pgmoon (PostgreSQL driver) | PostgreSQL connectivity |
+| lua-resty-mysql (MySQL driver) | MySQL connectivity |
+| Lua SQL migration scripts | Database schema management across engines |
 
 ## Development Workflow
 

@@ -5,10 +5,10 @@ local types = schema.types
 local migration = {}
 
 function migration.up()
-  local ok, err = pcall(schema.create_table, "users", {
+  -- TODO: adjust columns and indexes for Sample
+  local ok, err = pcall(schema.create_table, "samples", {
     { "id", types.id },
     { "name", types.varchar({ length = 255 }) },
-    { "email", types.varchar({ length = 255 }) },
     { "created_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) },
     { "updated_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) }
   }, {
@@ -18,14 +18,12 @@ function migration.up()
     error(err)
   end
 
-  ok, err = pcall(schema.create_index, "users", "email", { unique = true })
-  if not ok and err and not err:match("exists") then
-    error(err)
-  end
+  -- Example: schema.create_index("samples", "name", { unique = true })
 end
 
 function migration.down()
-  local ok, err = pcall(schema.drop_table, "users")
+  -- TODO: adjust rollback behavior if you add indexes or related data
+  local ok, err = pcall(schema.drop_table, "samples")
   if not ok and err and not err:match("exist") then
     error(err)
   end

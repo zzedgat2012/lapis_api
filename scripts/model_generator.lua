@@ -553,40 +553,42 @@ end
 write_file(model_path, model_template)
 
 local migration_template = string.format([=[local db = require("lapis.db")
+local schema = require("lapis.db.schema")
+local types = schema.types
 
 local migration = {}
 
-migration[1] = function()
+function migration.up()
   -- TODO: adjust columns and indexes for %s
-  db.query([[CREATE TABLE IF NOT EXISTS %s (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-  );]])
+  local ok, err = pcall(schema.create_table, "%s", {
+    { "id", types.id },
+    { "name", types.varchar({ length = 255 }) },
+    { "created_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) },
+    { "updated_at", types.timestamp({ default = db.raw("CURRENT_TIMESTAMP") }) }
+  }, {
+    if_not_exists = true
+  })
+  if not ok and err and not err:match("exists") then
+    error(err)
+  end
 
-  db.query([[CREATE TRIGGER IF NOT EXISTS trigger_%s_updated_at
-    AFTER UPDATE ON %s
-    FOR EACH ROW BEGIN
-      UPDATE %s SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-    END;]])
+  -- Example: schema.create_index("%s", "name", { unique = true })
 end
 
 function migration.down()
-  db.query([[DROP TRIGGER IF EXISTS trigger_%s_updated_at;]])
-  db.query([[DROP TABLE IF EXISTS %s;]])
+  -- TODO: adjust rollback behavior if you add indexes or related data
+  local ok, err = pcall(schema.drop_table, "%s")
+  if not ok and err and not err:match("exist") then
+    error(err)
+  end
 end
 
 return setmetatable(migration, {
   __call = function(_, ...)
-    local fn = migration[1]
-    if type(fn) ~= "function" then
-      error("Migration does not define an up function")
-    end
-    return fn(...)
+    return migration.up()
   end
 })
-]=], pascal_name, plural_table, plural_table, plural_table, plural_table, plural_table, plural_table)
+]=], pascal_name, plural_table, plural_table, plural_table)
 
 write_file(migration_path, migration_template)
 
