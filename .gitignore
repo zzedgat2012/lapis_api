@@ -1,3 +1,2 @@
 # Docker temporary files and logs
 .dockerjunk/
-.env
