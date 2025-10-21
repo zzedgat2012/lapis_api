@@ -554,7 +554,6 @@ write_file(model_path, model_template)
 
 local migration_template = string.format([=[local db = require("lapis.db")
 local schema = require("lapis.db.schema")
-local types = schema.types
 
 local migration = {}
 
@@ -564,6 +563,8 @@ end
 
 local id_type = schema_type("serial") or schema_type("id") or schema_type("integer")
 local timestamp_type = schema_type("timestamp") or schema_type("time") or schema_type("datetime")
+local varchar_type = schema_type("varchar")
+local text_type = schema_type("text")
 
 local function timestamp_column()
   if timestamp_type then
@@ -572,11 +573,28 @@ local function timestamp_column()
   return "timestamp DEFAULT CURRENT_TIMESTAMP"
 end
 
+local function id_column()
+  if id_type then
+    return id_type({ primary_key = true })
+  end
+  return "INTEGER PRIMARY KEY AUTOINCREMENT"
+end
+
+local function string_column(length)
+  if varchar_type then
+    return varchar_type({ length = length or 255 })
+  end
+  if text_type then
+    return text_type({})
+  end
+  return "TEXT NOT NULL"
+end
+
 function migration.up()
   -- TODO: adjust columns and indexes for %s
   local ok, err = pcall(schema.create_table, "%s", {
-    { "id", id_type },
-    { "name", types.varchar({ length = 255 }) },
+    { "id", id_column() },
+    { "name", string_column(255) },
     { "created_at", timestamp_column() },
     { "updated_at", timestamp_column() }
   }, {
